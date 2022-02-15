@@ -37,6 +37,7 @@ def post():
     for i in counted__cluster_values.index:
         strong_bins_area.append(i)
     empty_list = []
+    print(strong_bins_area)
     for i in strong_bins_area:
         empty_list.append(coordinates[i])
     k_num = round(math.sqrt(len(empty_list)))
