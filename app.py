@@ -23,8 +23,11 @@ def post():
 }
     request_data = request.get_json()
     df = pd.DataFrame(request_data, columns=['value'])
-    pref_hand = df.value.iloc[-1]
-    df.drop(df.tail(1).index, inplace=True)
+    shots_sim = df.value.iloc[-1]
+    pref_hand = df.value.iloc[-2]
+    df.drop(df.tail(2).index, inplace=True)
+    if shots_sim > 10000:
+        shots_sim = 1000
     coordinates = []
     for y in range(5, -6, -1):
         for x in range(-5, 6):
@@ -262,7 +265,7 @@ def post():
         cumulat_bins.append(cumulat_sum)
         cumulat_sum += i
     rand_freq_list = []
-    for i in range(1000):
+    for i in range(shots_sim):
         rand = round(random.uniform(min(cumulat_bins), max(cumulat_bins)),5)
         rand_freq_list.append(rand)
         rand_freq_list.sort()
