@@ -37,7 +37,6 @@ def post():
     for i in counted__cluster_values.index:
         strong_bins_area.append(i)
     empty_list = []
-    print(strong_bins_area)
     for i in strong_bins_area:
         empty_list.append(coordinates[i])
     k_num = round(math.sqrt(len(empty_list)))
@@ -108,7 +107,7 @@ def post():
         if i > 0:
             total_count +=1
     zero_bins = 121-total_count
-    zero_spread = total_shots
+    zero_spread = total_shots * .1
     zero_bin_list = []
     for count, value in enumerate(adj_rel_list):
         if value == 0:
@@ -238,15 +237,15 @@ def post():
     def prob_applier(centroid, i, value):
         distance = cor_dist_calc(centroid, i)
         direction = dir_function(cor_dir_calc(centroid, i))
-        final = value * direction / (1+distance)**2 + abs(distance -15) * qual_score / 100
+        final = value * direction / (1+distance)**2 + abs(distance -15) * qual_score / 100000
         final =  final * 1000
         return final
     for centroid in cluster_centroids:
         for count, value in enumerate(adj_rel_list):
             if coordinates[count] == centroid:
                 if coordinates[count] in strong_bins_cord:
-                    adj_rel_list[count] += ((value) * 0.25 / (1.8 **2) + (15 *qual_score/ 100)) * 1000
-                else: adj_rel_list[count] += ((value) * 0.25 / (1.8 **2) + (15 * qual_score / 1000000)) * 1000
+                    adj_rel_list[count] += ((value) * 0.25 / (1.4 **2) + (15 *qual_score/ 100000)) * 1000
+                else: adj_rel_list[count] += ((value) * 0.25 / (1.4 **2) + (15 * qual_score / 100000)) * 1000
             elif coordinates[count] in strong_bins_cord:
                 adj_rel_list[count] += prob_applier(centroid, coordinates[count], value) * .9
             else:
