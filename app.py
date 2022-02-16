@@ -237,15 +237,15 @@ def post():
     def prob_applier(centroid, i, value):
         distance = cor_dist_calc(centroid, i)
         direction = dir_function(cor_dir_calc(centroid, i))
-        final = value * direction / (1+distance)**2 + abs(distance -15) * qual_score / 100000
+        final = value * direction / (1+distance)**2 + abs(distance -15) * qual_score / 10000
         final =  final * 1000
         return final
     for centroid in cluster_centroids:
         for count, value in enumerate(adj_rel_list):
             if coordinates[count] == centroid:
                 if coordinates[count] in strong_bins_cord:
-                    adj_rel_list[count] += ((value) * 0.25 / (1.4 **2) + (15 *qual_score/ 100000)) * 1000
-                else: adj_rel_list[count] += ((value) * 0.25 / (1.4 **2) + (15 * qual_score / 100000)) * 1000
+                    adj_rel_list[count] += ((value) * 0.25 / (1.4 **2) + (15 *qual_score/ 10000)) * 1000
+                else: adj_rel_list[count] += ((value) * 0.25 / (1.4 **2) + (15 * qual_score / 10000)) * 1000
             elif coordinates[count] in strong_bins_cord:
                 adj_rel_list[count] += prob_applier(centroid, coordinates[count], value) * .9
             else:
