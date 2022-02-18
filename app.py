@@ -244,8 +244,8 @@ def post():
         for count, value in enumerate(adj_rel_list):
             if coordinates[count] == centroid:
                 if coordinates[count] in strong_bins_cord:
-                    adj_rel_list[count] += ((value) * 0.25 / (1.4 **2) + (15 *qual_score/ 100000)) * 1000
-                else: adj_rel_list[count] += ((value) * 0.25 / (1.4 **2) + (15 * qual_score / 100000)) * 1000
+                    adj_rel_list[count] += ((value) * 0.25 / (1.9 **2) + (15 *qual_score/ 100000)) * 1000
+                else: adj_rel_list[count] += ((value) * 0.25 / (1.9 **2) + (15 * qual_score / 100000)) * 1000
             elif coordinates[count] in strong_bins_cord:
                 adj_rel_list[count] += prob_applier(centroid, coordinates[count], value) * 0.47
             else:
