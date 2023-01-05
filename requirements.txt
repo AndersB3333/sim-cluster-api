@@ -1,5 +1,5 @@
 Flask
 Flask-Cors
-pandas
+numpy
 uwsgi
 scikit-learn
