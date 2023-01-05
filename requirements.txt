@@ -3,3 +3,4 @@ Flask-Cors
 numpy
 uwsgi
 scikit-learn
+gunicorn
