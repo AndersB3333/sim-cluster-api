@@ -33,7 +33,10 @@ def post():
     request_data = request.get_json()
 
     # Storing the values as a numpy array for faster processing
-    arr = np.array(request_data)
+    # note, the request data is a dictionary
+    arr = np.array([list(request_data.values())[0]])
+    arr = arr.T
+
     # Declaring whether the player was right (0), or left(1) handed, and
     # how many shots to be simulated
     PREF_HAND, SHOTS_SIM = arr[-2:]
@@ -313,7 +316,7 @@ def post():
         cumulat_bins.append(cumulat_sum)
         cumulat_sum += i
     rand_freq_list = []
-    for i in range(SHOTS_SIM):
+    for i in range(int(SHOTS_SIM)):
         rand = round(random.uniform(min(cumulat_bins), max(cumulat_bins)), 5)
         rand_freq_list.append(rand)
     rand_freq_list.sort()
