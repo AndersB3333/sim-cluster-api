@@ -276,6 +276,10 @@ def post():
 
     # The probability applier function, the values were arbitrarily
     # created to make it as realistic as possible
+
+    # The degree of probability to bins with original zero in value
+    NO_FREQ_BIN_RATE = 7
+
     def prob_applier(centroid, i, value):
         distance = cor_dist_calc(centroid, i)
         direction = dir_function(cor_dir_calc(centroid, i))
@@ -299,7 +303,7 @@ def post():
                                                     coordinates[count], value) * 0.47
             else:
                 adj_rel_list[count] += prob_applier(centroid,
-                                                    coordinates[count], value)
+                                                    coordinates[count], value) * NO_FREQ_BIN_RATE
 
     # Searching to see if some values that was originally zero had increased
     # by more than 5% of the total value. If this is the case, the value will be
