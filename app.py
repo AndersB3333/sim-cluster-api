@@ -37,7 +37,7 @@ def post():
     arr = np.array([list(request_data.values())[0]])
     arr = arr.T
 
-    # Declaring whether the player was right (0), or left(1) handed, and
+   # Declaring whether the player was right (0), or left(1) handed, and
     # how many shots to be simulated
     PREF_HAND, SHOTS_SIM = arr[-2:]
     # Deleting the values last two values since they're stored as separate
@@ -54,7 +54,6 @@ def post():
             coordinates.append([x, y])
     coordinates = np.array(coordinates)
     # Converting the strong bins coordinates to a list for kMeans section
-    # TODO: change this line to coordinates[strong_bins_area]
     list_convert_coord_strong_bins = [[j for j in i]
                                       for i in coordinates[strong_bins_area]]
     # Declaring the number of clusters.
@@ -82,6 +81,11 @@ def post():
     for count, outer_value in enumerate(cluster_list):
         for inner_value in outer_value:
             placeholder_list[count] += [list(coordinates[inner_value])]
+
+    # Multiplying the values for bins with several bins in each cluster
+    for cluster in cluster_list:
+        for val in range(len(cluster)):
+            arr[cluster[val]] = arr[cluster[val]] * len(cluster)
 
     # Calculates the center point, "centroid", of the bins that is > 0
 
@@ -130,27 +134,28 @@ def post():
     # storing the "quality" of the player with the qual_score variable
     qual_score = t_sum / total_shots
     # Reversing the quality of the player for the probability algorithm
-    qual_score = abs((abs(qual_score - 6) / 7))
+    qual_score = abs(qual_score - 6) / 7
     adj_rel_list = np.copy(relative_freq)
     np_adj_rel_list = np.array(relative_freq)
     total_count = len(np_adj_rel_list[np_adj_rel_list > 0])
     zero_bins = 121 - total_count
-    # Applying some probability to the values that are currently zero, so
-    # the program will not multiply by zero
+    # Applying some probability to the values that are currently zero, to avoid
+    # the program multiply or divide by zero
     zero_spread = total_shots * .1
     zero_bin_list = []
     for count, value in enumerate(relative_freq):
         if value == 0:
             zero_bin_list.append(count)
-            relative_freq[count] = relative_freq[count] + \
-                (zero_spread / zero_bins)
+            adj_rel_list[count] = zero_spread / zero_bins
 
     # Determining the euclidean distance between the two coordinates
     # the formula being used is the regular Frobenius norm
+
     def cor_dist_calc(cor1, cor2):
         return np.linalg.norm(cor2 - cor1)
 
     # Finding the direction between the two coordinates
+
     def cor_dir_calc(cor1, cor2):
         dir_x = (cor2[0] - cor1[0])
         dir_y = (cor2[1] - cor1[1])
@@ -158,6 +163,7 @@ def post():
         return angle
 
     # Assigning the probability for right handed players
+
     def cor_dir_prob_r(angle):
         if -1 <= angle <= 1:
             return 0.18
@@ -213,6 +219,7 @@ def post():
             raise ValueError("Unsupported value: {}".format(angle))
 
     # Probability of the direction of left-handed players
+
     def cor_dir_prob_l(angle):
         if -1 <= angle <= 1:
             return 0.18
@@ -277,15 +284,12 @@ def post():
     # The probability applier function, the values were arbitrarily
     # created to make it as realistic as possible
 
-    # The degree of probability to bins with original zero in value
-    NO_FREQ_BIN_RATE = 7
-
-    def prob_applier(centroid, i, value):
+    def prob_applier(centroid, i, value, adj_rel_list_val):
         distance = cor_dist_calc(centroid, i)
         direction = dir_function(cor_dir_calc(centroid, i))
-        final = value * direction / (1+distance)**2 + \
-            abs(distance - 15) * qual_score / 100000
-        final = final * 1000
+        final = value * direction / \
+            (1 + distance) ** 3 + abs(15 - distance) * \
+            adj_rel_list_val * qual_score
         return final
 
     # Looping through the centroids to assign probabilities to each bin
@@ -293,27 +297,29 @@ def post():
         for count, value in enumerate(adj_rel_list):
             if np.array_equal(coordinates[count], np.array(centroid)):
                 if coordinates[count] in np.array(strong_bins_cord):
-                    adj_rel_list[count] += ((value) * 0.25
-                                            / (1.9 ** 2) + (15 * qual_score / 100000)) * 1000
+                    adj_rel_list[count] += (value * 0.25
+                                            / (1.4 ** 3)) + 14.5 * adj_rel_list[count] * qual_score
+
                 else:
-                    adj_rel_list[count] += ((value) * 0.25
-                                            / (1.9 ** 2) + (15 * qual_score / 100000)) * 1000
+                    adj_rel_list[count] += value * 0.25 \
+                        / (1.4 ** 3) + 14.5 * adj_rel_list[count] * qual_score
+
             elif coordinates[count] in np.array(strong_bins_cord):
                 adj_rel_list[count] += prob_applier(centroid,
-                                                    coordinates[count], value) * 0.47
+                                                    coordinates[count], value, adj_rel_list[count]) * .5
             else:
                 adj_rel_list[count] += prob_applier(centroid,
-                                                    coordinates[count], value) * NO_FREQ_BIN_RATE
+                                                    coordinates[count], value, adj_rel_list[count])
 
     # Searching to see if some values that was originally zero had increased
     # by more than 5% of the total value. If this is the case, the value will be
-    # decreased by 10%
+    # decreased by 90%
     tot_sum = sum(adj_rel_list)
     zero_bin_adj_rel_list = adj_rel_list[zero_bin_list]
     zero_bin_adj_rel_list = zero_bin_adj_rel_list[zero_bin_adj_rel_list >=
                                                   tot_sum * 0.05] * .1
 
-    # Creating the cumulatative
+    # Creating the cumulatative bins that counts the values
     cumulat_bins = []
     cumulat_sum = 0
     for i in adj_rel_list:
