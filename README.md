@@ -28,7 +28,7 @@ Let points the number assigned to each bin in the diagram below, and denoted as 
 ```math
 \theta = \frac{1}{N} \sum_{n=1}^{N} \sigma \hat{x_{i}}
 ```
-The values that currently does have value 0 will be assigned $\frac{1}{10}\sum x_{i}}$ to avoid multiplication by 0 in the main probability algorithm.
+The values that currently does have value 0 will be assigned $\frac{1}{10}\sum x_{i}$ to avoid multiplication by 0 in the main probability algorithm.
 
 Distance denoted as $\rho$ between each coordinate is calculated by L2 norm, specifically Frobenius' formula.
 
@@ -46,7 +46,11 @@ The probability distribution output of the values in list 1 looks like this:
 
 This heatmap displays the relationship between the probability of each shot ending up in that specific bin.
 
-Through NumPy's uniformily distributed random number generator, these values are assigned based on their respective sequence. So, for example, if the probability of bin 71 is: $f(\widecheck{x_{71}}) = p(45<= \widecheck{x_{71}} <= 50)$, then all values of the random number generator between 45 and 50 will reflect simulated shots entering this specific bin. 
+Through NumPy's uniformily distributed random number generator, these values are assigned based on their respective sequence. So, for example, if the probability of bin 71 is: $f(\widecheck{x_{71}}) = p(45<= \widecheck{x_{71}} <= 50)$, then all values of the random number generator between 45 and 50 will reflect simulated shots entering this specific bin.
+
+So, conducting the probability accumulation, the output looks like this:
+<img width="347" alt="image" src="https://user-images.githubusercontent.com/94805074/213973638-2ed0595e-8b44-47cc-8117-026f19549e7d.png">
+
 
 
 
