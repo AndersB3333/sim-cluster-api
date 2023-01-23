@@ -49,6 +49,7 @@ This heatmap displays the relationship between the probability of each shot endi
 Through NumPy's uniformily distributed random number generator, these values are assigned based on their respective sequence. So, for example, if the probability of bin 71 is: $f(\widecheck{x_{71}}) = p(45<= \widecheck{x_{71}} <= 50)$, then all values of the random number generator between 45 and 50 will reflect simulated shots entering this specific bin.
 
 So, conducting the probability accumulation, the output looks like this:
+
 <img width="347" alt="image" src="https://user-images.githubusercontent.com/94805074/213973638-2ed0595e-8b44-47cc-8117-026f19549e7d.png">
 
 
