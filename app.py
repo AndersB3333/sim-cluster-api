@@ -324,6 +324,8 @@ def post():
     adj_rel_list /= adj_rel_list.sum()
     adj_rel_list = list(np.random.multinomial(SHOTS_SIM, adj_rel_list))
 
+    print(type(adj_rel_list))
+    print("Values: ", adj_rel_list)
     json_bin_count = json.jsonify(adj_rel_list)
     return json_bin_count
 
