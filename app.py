@@ -316,36 +316,15 @@ def post():
     # decreased by 90%
     tot_sum = sum(adj_rel_list)
     zero_bin_adj_rel_list = adj_rel_list[zero_bin_list]
-    zero_bin_adj_rel_list = zero_bin_adj_rel_list[zero_bin_adj_rel_list >=
-                                                  tot_sum * 0.05] * .1
+    zero_bin_adj_rel_list[zero_bin_adj_rel_list >=tot_sum * 0.05] = zero_bin_adj_rel_list[zero_bin_adj_rel_list >=
+                                              tot_sum * 0.05] * .1
+    adj_rel_list[zero_bin_list] = zero_bin_adj_rel_list
+    # drawing "shots" into the specific bins based on 
+    # probability of each bin
+    adj_rel_list /= adj_rel_list.sum()
+    adj_rel_list = list(np.random.multinomial(SHOTS_SIM, adj_rel_list))
 
-    # Creating the cumulatative bins that counts the values
-    cumulat_bins = []
-    cumulat_sum = 0
-    for i in adj_rel_list:
-        cumulat_bins.append(cumulat_sum)
-        cumulat_sum += i
-    rand_freq_list = []
-    for i in range(int(SHOTS_SIM)):
-        rand = round(random.uniform(min(cumulat_bins), max(cumulat_bins)), 5)
-        rand_freq_list.append(rand)
-    rand_freq_list.sort()
-    TOTAL_BINS = 121
-    index = 0
-    cumulat_bins_count = [0] * TOTAL_BINS
-    for count, value in enumerate(rand_freq_list):
-        index = 0
-        if cumulat_bins[119] < value <= cumulat_bins[120]:
-            cumulat_bins_count[120] += 1
-        while value > cumulat_bins[index + 1] and index < 119:
-            index += 1
-
-        if value < cumulat_bins[index + 1]:
-            cumulat_bins_count[index] += 1
-        else:
-            cumulat_bins_count[index-1] += 1
-
-    json_bin_count = json.jsonify(cumulat_bins_count)
+    json_bin_count = json.jsonify(adj_rel_list)
     return json_bin_count
 
 
