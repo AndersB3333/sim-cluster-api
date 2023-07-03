@@ -322,7 +322,7 @@ def post():
     # drawing "shots" into the specific bins based on 
     # probability of each bin
     adj_rel_list /= adj_rel_list.sum()
-    adj_rel_list = np.random.multinomial(SHOTS_SIM, adj_rel_list)
+    adj_rel_list = np.random.multinomial(SHOTS_SIM, adj_rel_list).tolist()
 
     json_bin_count = json.jsonify(adj_rel_list)
     return json_bin_count
